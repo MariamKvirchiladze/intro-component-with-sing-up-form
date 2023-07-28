@@ -1,36 +1,86 @@
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import schema from "./Schema";
 import errorimg from "../assets/images/icon-error.svg";
 import BlueBanner from "./BlueBanner";
 import styled from "styled-components";
 
+interface types {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
 const Form = (): JSX.Element => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<types>({
+    resolver: yupResolver(schema),
+  });
+  const onSubmit = (data: types) => {
+    if (data) {
+      window.location.reload();
+    }
+  };
   return (
     <MainContainer>
       <BlueBanner />
       <FormContainer>
-        <form>
-          <Mylable>
-            <MyInput type="text" placeholder="First Name"></MyInput>
-            <img src={errorimg} alt="error icon" />
-            <p>error</p>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Mylable error={errors}>
+            <MyInput
+              error={errors}
+              type="text"
+              placeholder="First Name"
+              {...register("firstName")}
+              className="firstNameErrorBorder"
+            ></MyInput>
+            <img
+              className="firstNameErrorImg"
+              src={errorimg}
+              alt="error icon"
+            />
+            <p>{errors.firstName?.message}</p>
           </Mylable>
-          <Mylable>
-            <MyInput type="text" placeholder="Last Name"></MyInput>
-            <img src={errorimg} alt="error icon" />
+          <Mylable error={errors}>
+            <MyInput
+              error={errors}
+              type="text"
+              placeholder="Last Name"
+              {...register("lastName")}
+              className="lastNameErrorBorder"
+            ></MyInput>
+            <img className="lastNameErrorImg" src={errorimg} alt="error icon" />
             <p>
-              <p>error</p>
+              <p>{errors.lastName?.message}</p>
             </p>
           </Mylable>
-          <Mylable>
-            <MyInput type="text" placeholder="email"></MyInput>
-            <img src={errorimg} alt="error icon" />
+          <Mylable error={errors}>
+            <MyInput
+              error={errors}
+              type="text"
+              placeholder="email"
+              {...register("email")}
+              className="emailErrorBorder"
+            ></MyInput>
+            <img className="emailErrorImg" src={errorimg} alt="error icon" />
             <p>
-              <p>error</p>
+              <p>{errors.email?.message}</p>
             </p>
           </Mylable>
-          <Mylable>
-            <MyInput type="password" placeholder="password"></MyInput>
+          <Mylable error={errors}>
+            <MyInput
+              error={errors}
+              type="password"
+              placeholder="password"
+              {...register("password")}
+              className="passwrdErrorBorder"
+            ></MyInput>
             <img />
-            <p>error</p>
+            <p>{errors.password?.message}</p>
           </Mylable>
           <button type="submit">CLAIM YOUR FREE TRIAL</button>
         </form>
@@ -113,12 +163,16 @@ const FormContainer = styled.div`
       line-height: 21px;
       letter-spacing: 0px;
       text-align: center;
+      cursor: pointer;
       color: #ff7979;
+    }
+    span:hover {
+      text-decoration: underline;
     }
   }
 `;
 
-const Mylable = styled.label`
+const Mylable = styled.label<{ error: any }>`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -133,14 +187,32 @@ const Mylable = styled.label`
     line-height: 17px;
     text-align: right;
   }
+  p:hover {
+    font-size: 15px;
+  }
   img {
     position: absolute;
     top: 15px;
     right: 10px;
   }
+  .firstNameErrorImg {
+    display: ${(props) => (props.error.firstName ? "block" : "none")};
+  }
+
+  .lastNameErrorImg {
+    display: ${(props) => (props.error.lastName ? "block" : "none")};
+  }
+
+  .emailErrorImg {
+    display: ${(props) => (props.error.email ? "block" : "none")};
+  }
+
+  .passwordErrorImg {
+    display: ${(props) => (props.error.password ? "block" : "none")};
+  }
 `;
 
-const MyInput = styled.input`
+const MyInput = styled.input<{ error: any }>`
   width: 100%;
   background: #ffffff;
   border: 1px solid #dedede;
@@ -154,5 +226,25 @@ const MyInput = styled.input`
   font-weight: 600;
   :focus {
     outline: none;
+  }
+
+  .firstNameErrorBorder {
+    border: ${(props) =>
+      props.error.firstName ? "2px solid #FF7979" : "1px solid #dedede"};
+  }
+
+  .lastNameErrorBorder {
+    border: ${(props) =>
+      props.error.lastName ? "2px solid #FF7979" : "1px solid #dedede"};
+  }
+
+  .emailErrorBorder {
+    border: ${(props) =>
+      props.error.email ? "2px solid #FF7979" : "1px solid #dedede"};
+  }
+
+  .passwordErrorBorder {
+    border: ${(props) =>
+      props.error.password ? "2px solid #FF7979" : "1px solid #dedede"};
   }
 `;
